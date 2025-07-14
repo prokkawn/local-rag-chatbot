@@ -7,7 +7,7 @@ A lightweight Retrieval-Augmented Generation chatbot that uses LangChain and Chr
 
 ## 🚀 Features
 - Upload your own `.pdf`, `.txt`, or `.md` files
-- Index documents with ChromaDB and embed via OpenAI
+- Index documents with ChromaDB and embed via HuggingFace
 - Ask questions in natural language
 - Get grounded responses and relevant sources
 - Simple CLI or Streamlit UI
