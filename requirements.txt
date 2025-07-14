@@ -1,0 +1,15 @@
+# Core dependencies
+langchain
+chromadb
+openai
+python-dotenv
+
+# Document loaders (e.g., for PDFs or markdown files)
+unstructured
+pypdf
+
+# Optional CLI enhancement (pretty terminal UI)
+rich
+
+# Optional Streamlit UI (comment out if not using)
+# streamlit
