@@ -1,46 +1,32 @@
 # Loads and indexes documents
 
 import os
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-# from langchain_openai import OpenAIEmbeddings
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.document_loaders import TextLoader
-from langchain_chroma import Chroma
+import glob
+from langchain_community.document_loaders import TextLoader, PyPDFLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
-os.environ["OPENAI_API_KEY"] = "insert your key here"
+os.environ["OPENAI_API_KEY"] = "insert OPENAI API key here"
 
-# Paths
-DOCS_DIR = "example_docs"
-PERSIST_DIR = "vector_store"
+def ingest_documents(directory_path):
+    all_files = glob.glob(os.path.join(directory_path, "*.txt")) + \
+                glob.glob(os.path.join(directory_path, "*.pdf"))
 
-def load_documents(directory):
-    docs = []
-    for filename in os.listdir(directory):
-        if filename.endswith(".txt"):  # Add more types later
-            path = os.path.join(directory, filename)
-            loader = TextLoader(path)
-            docs.extend(loader.load())
-    return docs
+    documents = []
+    for file_path in all_files:
+        if file_path.endswith(".txt"):
+            loader = TextLoader(file_path)
+        elif file_path.endswith(".pdf"):
+            loader = PyPDFLoader(file_path)
+        else:
+            continue  # Unsupported file type
+        documents.extend(loader.load())
 
-def main():
-    print("Loading documents...")
-    documents = load_documents(DOCS_DIR)
+    splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+    split_docs = splitter.split_documents(documents)
 
-    print(f"Loaded {len(documents)} documents. Splitting into chunks...")
-    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunks = splitter.split_documents(documents)
+    embeddings = HuggingFaceEmbeddings()
+    Chroma.from_documents(split_docs, embedding=embeddings, persist_directory="db")
 
-    print(f"Total chunks: {len(chunks)}. Creating embeddings...")
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    # embeddings = OpenAIEmbeddings()
-
-    print("Storing in ChromaDB...")
-    vectordb = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        persist_directory=PERSIST_DIR
-    )
-    print("✅ Vector store saved!")
-
-if __name__ == "__main__":
-    main()
+    print("✅ Documents indexed.")

@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 venv/
 example_docs/
+temp_docs/
+db/

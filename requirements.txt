@@ -1,15 +1,21 @@
-# Core dependencies
+# Core LLM + RAG Stack
 langchain
+langchain-community
 chromadb
 openai
 python-dotenv
 
-# Document loaders (e.g., for PDFs or markdown files)
+# Embeddings
+huggingface_hub
+sentence-transformers
+torch
+
+# Document Loaders
 unstructured
 pypdf
 
-# Optional CLI enhancement (pretty terminal UI)
-rich
+# Optional UI
+streamlit
 
-# Optional Streamlit UI (comment out if not using)
-# streamlit
+# Optional CLI enhancement
+rich
